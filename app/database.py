@@ -21,7 +21,7 @@ AsyncLocalSession = sessionmaker(
 )
 
 # Base class for models (tables will inherit from this)
-Base = declarative_base
+Base = declarative_base()
 
 # Dependacy for FastAPI routes -> gets DB session
 async def get_db():

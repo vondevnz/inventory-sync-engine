@@ -91,12 +91,27 @@ async def get_stock(sku: str, db: AsyncSession = Depends(get_db)):
 		total = product.stock_level
 	)
 
+# Root info -> documentation about all available endpoints
+@app.get("/info")
+async def info():
+	return {
+		"title": "Inventory Sync Engine v1.0.0",
+		"endpoints": {
+			"/": "Health check",
+			"/api/webhooks/order-created": "Receive order notification (POST)",
+			"/api/products/{sku}/stock": "Get stock status (GET)",
+			"/docs": "Swagger UI documentation"
+		},
+		"features": {
+			"Race condition prevention via optimistic locking",
+			"Idempotent webhook processing",
+			"Two-stage stock reservation system"
+		}
+	}
 
-
-
-
-
-
+if __name__ == "__main__":
+	import uvicorn
+	uvicorn.run(app, host = "0.0.0.0", port = 8000)
 
 
 

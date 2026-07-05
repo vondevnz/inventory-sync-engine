@@ -35,10 +35,9 @@ async def seed():
                 print(f"- Exists: {product_data['sku']}")
         
         await session.commit()
-        print("\n🎉 Seed complete!")
+        print("\nSeed complete!")
 
 
 if __name__ == "__main__":
     asyncio.run(seed())
 
-    

@@ -14,33 +14,82 @@ Built with Python, FastAPI, PostgreSQL, and Docker.
 
 ## Architecture
 
+<code>                Internet
+                    │
+                    ▼
+      ┌─────────────────────────┐
+      │   Shopify / External    │
+      │      Webhook Client     │
+      └───────────┬─────────────┘
+                  │ POST /api/webhooks/order-created
+                  │ JSON: {order_id, sku, quantity}
+                  ▼
+      ┌─────────────────────────┐
+      │   FastAPI Application   │
+      │  ┌─────────────────┐    │
+      │  │ app/main.py     │    │
+      │  │ - HTTP Routes   │    │
+      │  │ - API Endpoints │    │
+      │  └────────┬────────┘    │
+      │           │             │
+      │  ┌────────▼────────┐    │
+      │  │ app/service.py  │    │
+      │  │ - Business Logic│    │
+      │  │ - Idempotency   │    │
+      │  │ - Optimistic    │    │
+      │  │   Locking       │    │
+      │  └────────┬────────┘    │
+      └───────────┼─────────────┘
+                  │ SQLAlchemy Async Session
+                  │ PostgreSQL Driver (asyncpg)
+                  ▼
+      ┌─────────────────────────┐
+      │   PostgreSQL Database   │
+      │  ┌─────────────────┐    │
+      │  │ products        │    │
+      │  │ - id            │    │
+      │  │ - sku           │    │
+      │  │ - stock_level   │    │
+      │  │ - reserved_stock│    │
+      │  └─────────────────┘    │
+      │                         │
+      │  ┌─────────────────┐    │
+      │  │ order_reservas..│    │
+      │  │ - id            │    │
+      │  │ - order_id      │    │
+      │  │ - product_id    │    │
+      │  │ - status        │    │
+      │  └─────────────────┘    │
+      └─────────────────────────┘
+</code>
 
 ## Tech Stack
-Framework: Python 3.11, FastAPI, uvicorn
-ORM: SQLAlchemy 2.0, asyncpg
-Database: PostgreSQL 15
-Deployment: Docker, Docker Compose
-API Documentation: Swagger/OpenAPI UI
+- Framework: Python 3.11, FastAPI, uvicorn
+- ORM: SQLAlchemy 2.0, asyncpg
+- Database: PostgreSQL 15
+- Deployment: Docker, Docker Compose
+- API Documentation: Swagger/OpenAPI UI
 
-##Quick Start
-#Prerequisites
-Docker Desktop installed
-git clone'd this repository
-Installation
+## Quick Start
+Prerequisites  
+- Docker Desktop installed  
+- git clone'd this repository  
 
-# Clone and navigate to project directory
-git clone https://github.com/vondevnz/inventory-sync-engine.git
-cd inventory-sync-engine
+## Installation
 
-# Build and start containers
+## Clone and navigate to project directory
+git clone https://github.com/vondevnz/inventory-sync-engine.git   
+cd inventory-sync-engine   
+
+## Build and start containers
 docker-compose up --build -d
 
-# Wait ~30 seconds for database to initialize
+## Wait ~30 seconds for database to initialize
 
-# Verify app is running
+## Verify app is running
 curl http://localhost:8000/
 
-##Access API Documentation
+## Access API Documentation
 
 Open in browser:
 http://localhost:8000/docs
